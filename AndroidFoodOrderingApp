@@ -722,7 +722,6 @@ class ItemDetailActivity : AppCompatActivity() {
 ```
 
 ### CartActivity.kt
-```kotlin
 package com.example.foodorderingapp
 
 import android.content.Intent
@@ -819,88 +818,93 @@ class CartActivity : AppCompatActivity() {
     }
     
     private fun createCartItemView(cartItem: CartItem, position: Int): LinearLayout {
-        return LinearLayout(this).apply {
+        // Create main container
+        val itemContainer = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
             setBackgroundColor(ContextCompat.getColor(context, android.R.color.white))
             setPadding(32, 32, 32, 32)
             elevation = 4f
             
-            val layoutParams = LinearLayout.LayoutParams(
+            val params = LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
             ).apply {
                 setMargins(0, 0, 0, 16)
             }
-            this.layoutParams = layoutParams
+            layoutParams = params
+        }
+        
+        // Create header with name and price
+        val headerLayout = LinearLayout(this).apply {
+            orientation = LinearLayout.HORIZONTAL
+        }
+        
+        val nameTextView = TextView(this).apply {
+            text = "${cartItem.foodItem.name} (${cartItem.size})"
+            textSize = 16f
+            setTextColor(ContextCompat.getColor(context, android.R.color.black))
+            layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
+        }
+        
+        val priceTextView = TextView(this).apply {
+            text = String.format("$%.2f", cartItem.getTotalPrice())
+            textSize = 16f
+            setTextColor(ContextCompat.getColor(context, android.R.color.holo_orange_dark))
+        }
+        
+        headerLayout.addView(nameTextView)
+        headerLayout.addView(priceTextView)
+        
+        // Create quantity text
+        val quantityTextView = TextView(this).apply {
+            text = "Quantity: ${cartItem.quantity}"
+            textSize = 14f
+            setTextColor(ContextCompat.getColor(context, android.R.color.darker_gray))
+            setPadding(0, 8, 0, 0)
+        }
+        
+        // Create remove button
+        val removeButton = Button(this).apply {
+            text = "Remove"
+            textSize = 12f
+            setBackgroundColor(ContextCompat.getColor(context, android.R.color.darker_gray))
+            setTextColor(ContextCompat.getColor(context, android.R.color.holo_red_dark))
+            setPadding(32, 0, 32, 0)
             
-            // Item name and price row
-            val headerLayout = LinearLayout(context).apply {
-                orientation = LinearLayout.HORIZONTAL
-                
-                val nameTextView = TextView(context).apply {
-                    text = "${cartItem.foodItem.name} (${cartItem.size})"
-                    textSize = 16f
-                    setTextColor(ContextCompat.getColor(context, android.R.color.black))
-                    layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
-                }
-                
-                val priceTextView = TextView(context).apply {
-                    text = String.format("$%.2f", cartItem.getTotalPrice())
-                    textSize = 16f
-                    setTextColor(ContextCompat.getColor(context, android.R.color.holo_orange_dark))
-                }
-                
-                addView(nameTextView)
-                addView(priceTextView)
+            val buttonParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                100
+            ).apply {
+                setMargins(0, 16, 0, 0)
             }
+            layoutParams = buttonParams
             
-            // Quantity text
-            val quantityTextView = TextView(context).apply {
-                text = "Quantity: ${cartItem.quantity}"
+            setOnClickListener {
+                CartManager.removeItem(position)
+                displayCartItems()
+                updateTotals()
+                Toast.makeText(context, "Item removed", Toast.LENGTH_SHORT).show()
+            }
+        }
+        
+        // Add all views to container
+        itemContainer.addView(headerLayout)
+        itemContainer.addView(quantityTextView)
+        
+        // Add extras if any
+        if (cartItem.extras.isNotEmpty()) {
+            val extrasTextView = TextView(this).apply {
+                text = "Extras: ${cartItem.extras.joinToString(", ")}"
                 textSize = 14f
                 setTextColor(ContextCompat.getColor(context, android.R.color.darker_gray))
-                setPadding(0, 8, 0, 0)
+                setPadding(0, 4, 0, 0)
             }
-            
-            // Extras text
-            if (cartItem.extras.isNotEmpty()) {
-                val extrasTextView = TextView(context).apply {
-                    text = "Extras: ${cartItem.extras.joinToString(", ")}"
-                    textSize = 14f
-                    setTextColor(ContextCompat.getColor(context, android.R.color.darker_gray))
-                    setPadding(0, 4, 0, 0)
-                }
-                addView(extrasTextView)
-            }
-            
-            // Remove button
-            val removeButton = Button(context).apply {
-                text = "Remove"
-                textSize = 12f
-                setBackgroundColor(ContextCompat.getColor(context, android.R.color.darker_gray))
-                setTextColor(ContextCompat.getColor(context, android.R.color.holo_red_dark))
-                setPadding(32, 0, 32, 0)
-                
-                val buttonParams = LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.WRAP_CONTENT,
-                    100
-                ).apply {
-                    setMargins(0, 16, 0, 0)
-                }
-                layoutParams = buttonParams
-                
-                setOnClickListener {
-                    CartManager.removeItem(position)
-                    displayCartItems()
-                    updateTotals()
-                    Toast.makeText(context, "Item removed", Toast.LENGTH_SHORT).show()
-                }
-            }
-            
-            addView(headerLayout)
-            addView(quantityTextView)
-            addView(removeButton)
+            itemContainer.addView(extrasTextView)
         }
+        
+        itemContainer.addView(removeButton)
+        
+        return itemContainer
     }
     
     private fun updateTotals() {
