@@ -1623,7 +1623,6 @@ class CheckoutActivity : AppCompatActivity() {
 ```
 
 ### res/layout/activity_cart.xml
-```xml
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
@@ -1664,7 +1663,7 @@ class CheckoutActivity : AppCompatActivity() {
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding="16dp">
-            
+
             <!-- Cart items will be added programmatically -->
 
         </LinearLayout>
@@ -1761,7 +1760,34 @@ class CheckoutActivity : AppCompatActivity() {
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/continueShopping"
+                android:layout_width="0dp"
+                android:layout_height="56dp"
+                android:layout_weight="1"
+                android:text="Continue Shopping"
+                android:textSize="14sp"
+                android:backgroundTint="#E0E0E0"
+                android:textColor="#333333"
+                android:layout_marginEnd="8dp" />
+
+            <Button
+                android:id="@+id/checkoutButton"
+                android:layout_width="0dp"
+                android:layout_height="56dp"
+                android:layout_weight="1"
+                android:text="Checkout"
+                android:textSize="16sp"
+                android:textColor="@android:color/white"
+                android:backgroundTint="#FF6B35"
+                android:layout_marginStart="8dp" />
+
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>
 
 ### res/layout/activity_cart.xml
 
